@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Рассчитать +11%</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+    }
+    .container {
+      text-align: center;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    input[type="number"], input[readonly] {
+      width: 200px;
+      padding: 10px;
+      margin: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    input[readonly] {
+      background-color: #e9ecef;
+    }
+    .description {
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="description">Введи цену от Васи:</div>
+    <input type="number" id="inputField" placeholder="Введите число" oninput="calculate()">
+    <div class="description">Гал не должна превышать:</div>
+    <input type="text" id="outputField" readonly>
+  </div>
+
+  <script>
+    function calculate() {
+      const inputField = document.getElementById("inputField");
+      const outputField = document.getElementById("outputField");
+
+      const inputValue = parseFloat(inputField.value);
+      if (!isNaN(inputValue)) {
+        const result = inputValue + inputValue * 0.11;
+        outputField.value = result.toFixed(2); // Округляем до двух знаков
+      } else {
+        outputField.value = ""; // Очищаем поле результата, если ввод некорректный
+      }
+    }
+  </script>
+</body>
+</html>
