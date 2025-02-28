@@ -138,6 +138,12 @@
             font-size: 14px; /* Меньший шрифт для материалов */
         }
 
+        /* Стили для отключенных кнопок */
+        #diameter-buttons .button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
         /* Адаптивность для мобильных устройств */
         @media (max-width: 600px) {
             body {
@@ -236,6 +242,42 @@
         let selectedDiameter = diameters[0];
         let selectedType = types[0];
 
+        // Функция для обновления доступности кнопок диаметра
+        function updateDiameterButtons() {
+            const diameterButtons = document.querySelectorAll('#diameter-buttons .button');
+            const disabledDiameters = [12, 14, 16]; // Диаметры, которые нужно отключить для "Кованной"
+
+            diameterButtons.forEach(button => {
+                const diameter = parseInt(button.innerText); // Получаем диаметр из текста кнопки
+                if (selectedType === 'Кованная' && disabledDiameters.includes(diameter)) {
+                    button.disabled = true; // Отключаем кнопку
+                    button.style.opacity = '0.5'; // Делаем кнопку полупрозрачной
+                } else {
+                    button.disabled = false; // Включаем кнопку
+                    button.style.opacity = '1'; // Возвращаем нормальную прозрачность
+                }
+            });
+        }
+
+        // Функция для сброса выбора диаметра, если он недоступен
+        function resetDiameterSelection() {
+            const disabledDiameters = [12, 14, 16]; // Диаметры, которые недоступны для "Кованной"
+            if (selectedType === 'Кованная' && disabledDiameters.includes(selectedDiameter)) {
+                // Находим первый доступный диаметр
+                const availableDiameters = diameters.filter(d => !disabledDiameters.includes(d));
+                if (availableDiameters.length > 0) {
+                    selectedDiameter = availableDiameters[0]; // Выбираем первый доступный диаметр
+                    // Обновляем активную кнопку
+                    document.querySelectorAll('#diameter-buttons .button').forEach(button => {
+                        button.classList.remove('active');
+                        if (parseInt(button.innerText) === selectedDiameter) {
+                            button.classList.add('active');
+                        }
+                    });
+                }
+            }
+        }
+
         function createButtons(containerId, values, callback) {
             const container = document.getElementById(containerId);
             values.forEach(value => {
@@ -253,9 +295,19 @@
         }
 
         createButtons('diameter-buttons', diameters, value => selectedDiameter = value);
-        createButtons('type-buttons', types, value => selectedType = value);
+        createButtons('type-buttons', types, value => {
+            selectedType = value;
+            updateDiameterButtons(); // Обновляем доступность кнопок диаметра
+            resetDiameterSelection(); // Сбрасываем выбор диаметра, если он недоступен
+        });
 
         function calculatePrice() {
+            const disabledDiameters = [12, 14, 16]; // Диаметры, которые недоступны для "Кованной"
+            if (selectedType === 'Кованная' && disabledDiameters.includes(selectedDiameter)) {
+                document.getElementById("result").innerText = "Выберите доступный диаметр для кованной стремянки!";
+                return;
+            }
+
             const prices = { 12: 85, 14: 65, 16: 65, 18: 70, 20: 70, 22: 80, 24: 80, 27: 170 };
             const weights = { 12: 0.88, 14: 1.2, 16: 1.57, 18: 1.98, 20: 2.45, 22: 2.96, 24: 3.53, 27: 4.46 };
             const materials = { 'Обычная': 100, 'Кованная': 320 };
