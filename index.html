@@ -1,64 +1,316 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Рассчитать +11%</title>
-  <style>
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f9;
-    }
-    .container {
-      text-align: center;
-      background: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-    input[type="number"], input[readonly] {
-      width: 200px;
-      padding: 10px;
-      margin: 10px;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    input[readonly] {
-      background-color: #e9ecef;
-    }
-    .description {
-      margin-bottom: 10px;
-      font-size: 18px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькуляторы</title>
+    <style>
+        /* Общие стили */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+            max-width: 100%;
+            width: 400px;
+            margin: 10px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: left;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        .buttons-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .button {
+            padding: 12px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            background: #007bff;
+            color: white;
+            font-size: 16px;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            flex: 1 1 auto;
+            min-width: 120px;
+        }
+
+        .button:hover {
+            background: #0056b3;
+        }
+
+        .button:active {
+            transform: scale(0.95);
+        }
+
+        .button.active {
+            background: #004099;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 15px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            color: #333;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Стили для вкладок */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            border: 1px solid #ccc;
+            border-bottom: none;
+            border-radius: 8px 8px 0 0;
+            background-color: #f8f9fa;
+            cursor: pointer;
+            font-size: 16px;
+            color: #333;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .tab:hover {
+            background-color: #e9ecef;
+        }
+
+        .tab.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        /* Цвета для результатов */
+        #result {
+            color: #007bff;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        #result .price {
+            color: #dc3545; /* Красный цвет для цены */
+            font-weight: bold; /* Жирный шрифт */
+        }
+
+        #materials {
+            color: #28a745;
+            font-size: 14px; /* Меньший шрифт для материалов */
+        }
+
+        /* Адаптивность для мобильных устройств */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 15px;
+                width: 100%;
+                margin: 5px;
+            }
+
+            .button {
+                padding: 10px 15px;
+                font-size: 14px;
+                min-width: 100px;
+            }
+
+            input {
+                font-size: 14px;
+                padding: 8px;
+            }
+
+            label {
+                font-size: 14px;
+            }
+
+            .result {
+                font-size: 16px;
+                padding: 8px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <div class="description">Введи цену от Васи:</div>
-    <input type="number" id="inputField" placeholder="Введите цену в грн" oninput="calculate()">
-    <div class="description">Цена Гал не должна превышать:</div>
-    <input type="text" id="outputField" readonly>
-  </div>
 
-  <script>
-    function calculate() {
-      const inputField = document.getElementById("inputField");
-      const outputField = document.getElementById("outputField");
+    <!-- Вкладки для переключения между калькуляторами -->
+    <div class="tabs">
+        <div class="tab active" onclick="showCalculator('ladder')">Калькулятор стремянки</div>
+        <div class="tab" onclick="showCalculator('metal')">Калькулятор веса металла</div>
+    </div>
 
-      const inputValue = parseFloat(inputField.value);
-      if (!isNaN(inputValue)) {
-        const result = inputValue + inputValue * 0.11;
-        outputField.value = result.toFixed(2); // Округляем до двух знаков
-      } else {
-        outputField.value = ""; // Очищаем поле результата, если ввод некорректный
-      }
-    }
-  </script>
+    <!-- Калькулятор стремянки -->
+    <div id="ladder" class="container">
+        <h2>Калькулятор стоимости стремянки</h2>
+        <label>Диаметр прута (мм):</label>
+        <div class="buttons-group" id="diameter-buttons"></div>
+
+        <label for="width">Ширина между ногами (мм):</label>
+        <input type="number" id="width" min="1">
+        
+        <label for="height">Высота (мм):</label>
+        <input type="number" id="height" min="1">
+    
+        <label>Тип стремянки:</label>
+        <div class="buttons-group" id="type-buttons"></div>
+    
+        <button class="button" style="margin-top: 20px;" onclick="calculatePrice()">Рассчитать</button>
+        <div class="result" id="result"></div>
+        <div class="result" id="materials"></div>
+    </div>
+
+    <!-- Калькулятор веса металла -->
+    <div id="metal" class="container hidden">
+        <h2>Калькулятор веса металла</h2>
+        <div class="buttons-group">
+            <button id="btnSheet" class="button active" onclick="selectType('sheet')">Лист</button>
+            <button id="btnRound" class="button" onclick="selectType('round')">Кругляк</button>
+        </div>
+        <div id="sheet-fields">
+            <input type="number" id="length" placeholder="Длина (мм)">
+            <input type="number" id="width-metal" placeholder="Ширина (мм)">
+            <input type="number" id="thickness" placeholder="Толщина (мм)">
+        </div>
+        <div id="round-fields" class="hidden">
+            <input type="number" id="diameter-metal" placeholder="Диаметр (мм)">
+            <input type="number" id="length-round" placeholder="Длина (мм)">
+        </div>
+        <button class="button" style="margin-top: 20px;" onclick="calculateWeight()">Рассчитать</button>
+        <div class="result">Вес: <span id="weight-result">0</span> кг</div>
+    </div>
+
+    <script>
+        // Переключение между калькуляторами
+        function showCalculator(calc) {
+            document.getElementById('ladder').classList.add('hidden');
+            document.getElementById('metal').classList.add('hidden');
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(calc).classList.remove('hidden');
+            event.target.classList.add('active');
+        }
+
+        // Калькулятор стремянки
+        const diameters = [12, 14, 16, 18, 20, 22, 24, 27];
+        const types = ['Обычная', 'Кованная'];
+        let selectedDiameter = diameters[0];
+        let selectedType = types[0];
+
+        function createButtons(containerId, values, callback) {
+            const container = document.getElementById(containerId);
+            values.forEach(value => {
+                const button = document.createElement('button');
+                button.innerText = value + (containerId === 'diameter-buttons' ? ' мм' : '');
+                button.classList.add('button');
+                button.onclick = () => {
+                    document.querySelectorAll(`#${containerId} .button`).forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    callback(value);
+                };
+                container.appendChild(button);
+            });
+            container.children[0].classList.add('active');
+        }
+
+        createButtons('diameter-buttons', diameters, value => selectedDiameter = value);
+        createButtons('type-buttons', types, value => selectedType = value);
+
+        function calculatePrice() {
+            const prices = { 12: 85, 14: 65, 16: 65, 18: 70, 20: 70, 22: 80, 24: 80, 27: 170 };
+            const weights = { 12: 0.88, 14: 1.2, 16: 1.57, 18: 1.98, 20: 2.45, 22: 2.96, 24: 3.53, 27: 4.46 };
+            const materials = { 'Обычная': 100, 'Кованная': 320 };
+            const work = { 'Обычная': 230, 'Кованная': 350 };
+
+            let width = parseFloat(document.getElementById("width").value);
+            let height = parseFloat(document.getElementById("height").value);
+
+            if (isNaN(width) || isNaN(height) || width <= 0 || height <= 0) {
+                document.getElementById("result").innerText = "Введите корректные размеры!";
+                return;
+            }
+
+            let length = height * 2;
+            let weightPerMeter = weights[selectedDiameter];
+            let pricePerKg = prices[selectedDiameter];
+            
+            let weight = Math.ceil(((length + width) * (weightPerMeter / 1000)) * 10) / 10;
+            let totalPrice = Math.ceil(weight * pricePerKg + materials[selectedType] + work[selectedType]);
+
+            let size = `${selectedDiameter}мм x ${width}мм x ${height}мм, ${selectedType}`;
+            document.getElementById("result").innerHTML = `Размер: ${size} - Цена: <span class="price">${totalPrice} грн</span>`;
+            
+            let totalLength = length + width;
+            document.getElementById("materials").innerText = `Материалы на одну стремянку: ${selectedDiameter}мм - Вес: ${weight.toFixed(1)} кг - Длина: ${totalLength} мм`;
+        }
+
+        // Калькулятор веса металла
+        let selectedTypeMetal = 'sheet';
+
+        function selectType(type) {
+            selectedTypeMetal = type;
+            document.getElementById("sheet-fields").style.display = type === "sheet" ? "block" : "none";
+            document.getElementById("round-fields").style.display = type === "round" ? "block" : "none";
+            document.getElementById("btnSheet").classList.toggle("active", type === "sheet");
+            document.getElementById("btnRound").classList.toggle("active", type === "round");
+        }
+
+        function calculateWeight() {
+            let density = 7.85; // Плотность стали, г/см³
+            let weight = 0;
+            
+            if (selectedTypeMetal === "sheet") {
+                let length = parseFloat(document.getElementById("length").value) / 1000;
+                let width = parseFloat(document.getElementById("width-metal").value) / 1000;
+                let thickness = parseFloat(document.getElementById("thickness").value) / 1000;
+                weight = length * width * thickness * density * 1000;
+            } else {
+                let diameter = parseFloat(document.getElementById("diameter-metal").value) / 1000;
+                let length = parseFloat(document.getElementById("length-round").value) / 1000;
+                weight = (Math.PI * Math.pow(diameter / 2, 2) * length * density * 1000);
+            }
+            
+            document.getElementById("weight-result").innerText = weight.toFixed(2);
+        }
+    </script>
 </body>
 </html>
