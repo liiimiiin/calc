@@ -383,7 +383,7 @@
             let weight = Math.ceil(((length + width) * ((weightPerMeter / 1000)) * 10)* 1.15) / 10;
             let totalPrice = Math.ceil(weight * pricePerKg + materials[selectedType] + work[selectedType]);
 
-            let size = `${selectedDiameter}мм x ${width}мм x ${height}мм, ${selectedType}`;
+            let size = `${selectedDiameter}x${width}x${height}мм, ${selectedType}`;
             document.getElementById("result").innerHTML = `Размер: ${size} - Цена: <span class="price">${totalPrice} грн</span>`;
             
             let totalLength = length + width;
