@@ -208,8 +208,8 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            margin-bottom: 20px;
-            padding: 10px;
+            margin-bottom: 10px;
+            padding: 5px;
             border: 1px solid #ccc;
             border-radius: 8px;
         }
@@ -224,9 +224,9 @@
         }
 
         .sheet-row .result {
-            margin-top: 10px;
+            margin-top: 0px;
             font-size: 14px;
-            padding: 10px;
+            padding: 3px;
             background: #f8f9fa;
             border: 1px solid #dee2e6;
             border-radius: 5px;
@@ -280,14 +280,14 @@
 
     <!-- Вкладки для переключения между калькуляторами -->
     <div class="tabs">
-        <div class="tab active" onclick="showCalculator('ladder')">Калькулятор стремянки</div>
-        <div class="tab" onclick="showCalculator('metal')">Калькулятор веса металла</div>
-        <div class="tab" onclick="showCalculator('spring')">Калькулятор рессоры</div>
+        <div class="tab active" onclick="showCalculator('ladder')">Стремянки</div>
+        <div class="tab" onclick="showCalculator('metal')">Вес металла</div>
+        <div class="tab" onclick="showCalculator('spring')">Листы рессоры</div>
     </div>
 
     <!-- Калькулятор стремянки -->
     <div id="ladder" class="container">
-        <h2>Калькулятор стоимости стремянки</h2>
+        <h2>Калькулятор стремянки</h2>
 
         <!-- Тип стремянки -->
         <label>Тип стремянки:</label>
