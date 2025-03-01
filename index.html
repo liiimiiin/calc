@@ -21,7 +21,7 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             display: inline-block;
             max-width: 100%;
-            width: 420px;
+            width: 460px;
             margin: 2px;
             box-sizing: border-box;
         }
@@ -158,7 +158,7 @@
         }
 
         /* Адаптивность для мобильных устройств */
-        @media (max-width: 420px) {
+        @media (max-width: 460px) {
             body {
                 padding: 10px;
             }
@@ -202,6 +202,78 @@
                 grid-template-columns: repeat(2, 1fr);
             }
         }
+
+        /* Стили для калькулятора рессоры */
+        .sheet-row {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        .sheet-row .input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .sheet-row .input-group input {
+            flex: 1;
+        }
+
+        .sheet-row .result {
+            margin-top: 10px;
+            font-size: 14px;
+            padding: 10px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sheet-row .result .weight {
+            color: #28a745; /* Зеленый цвет для веса */
+        }
+
+        .sheet-row .result .sheet-price {
+            color: #dc3545; /* Красный цвет для стоимости */
+        }
+
+        .sheet-row .delete-button {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .sheet-row .delete-button:hover {
+            background-color: #5a6268;
+        }
+
+        .add-sheet-button {
+            margin-top: 10px;
+        }
+
+        .total-result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .total-result .total-price {
+            color: #dc3545; /* Красный цвет для стоимости комплекта */
+        }
+
+        .total-result .total-weight {
+            color: #28a745; /* Зеленый цвет для веса комплекта */
+        }
     </style>
 </head>
 <body>
@@ -210,6 +282,7 @@
     <div class="tabs">
         <div class="tab active" onclick="showCalculator('ladder')">Калькулятор стремянки</div>
         <div class="tab" onclick="showCalculator('metal')">Калькулятор веса металла</div>
+        <div class="tab" onclick="showCalculator('spring')">Калькулятор рессоры</div>
     </div>
 
     <!-- Калькулятор стремянки -->
@@ -255,11 +328,34 @@
         <div class="result">Вес: <span id="weight-result">0</span> кг</div>
     </div>
 
+    <!-- Калькулятор рессоры -->
+    <div id="spring" class="container hidden">
+        <h2>Калькулятор рессоры</h2>
+        <div id="sheet-rows">
+            <div class="sheet-row">
+                <div class="input-group">
+                    <input type="number" placeholder="Длина (мм)" class="length">
+                    <input type="number" placeholder="Ширина (мм)" class="width">
+                    <input type="number" placeholder="Толщина (мм)" class="thickness">
+                    <input type="number" placeholder="Цена (грн/кг)" class="price">
+                </div>
+                <div class="result">
+                    <span>Вес: <span class="weight">0</span> кг | Стоимость: <span class="sheet-price">0</span> грн</span>
+                    <button class="delete-button" onclick="deleteSheetRow(this)">Удалить</button>
+                </div>
+            </div>
+        </div>
+        <button class="button add-sheet-button" onclick="addSheetRow()">Добавить новый лист</button>
+        <div class="total-result">Стоимость комплекта: <span class="total-price">0</span> грн</div>
+        <div class="total-result">Вес комплекта: <span class="total-weight">0</span> кг</div>
+    </div>
+
     <script>
         // Переключение между калькуляторами
         function showCalculator(calc) {
             document.getElementById('ladder').classList.add('hidden');
             document.getElementById('metal').classList.add('hidden');
+            document.getElementById('spring').classList.add('hidden');
             document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
             document.getElementById(calc).classList.remove('hidden');
             event.target.classList.add('active');
@@ -427,6 +523,77 @@
         document.getElementById("thickness").addEventListener("input", calculateWeight);
         document.getElementById("diameter-metal").addEventListener("input", calculateWeight);
         document.getElementById("length-round").addEventListener("input", calculateWeight);
+
+        // Калькулятор рессоры
+        function addSheetRow() {
+            const sheetRows = document.getElementById("sheet-rows");
+            const firstRow = sheetRows.querySelector(".sheet-row");
+            const newRow = document.createElement("div");
+            newRow.className = "sheet-row";
+            newRow.innerHTML = `
+                <div class="input-group">
+                    <input type="number" placeholder="Длина (мм)" class="length">
+                    <input type="number" placeholder="Ширина (мм)" class="width">
+                    <input type="number" placeholder="Толщина (мм)" class="thickness">
+                    <input type="number" placeholder="Цена (грн/кг)" class="price">
+                </div>
+                <div class="result">
+                    <span>Вес: <span class="weight">0</span> кг | Стоимость: <span class="sheet-price">0</span> грн</span>
+                    <button class="delete-button" onclick="deleteSheetRow(this)">Удалить</button>
+                </div>
+            `;
+
+            // Дублируем ширину и толщину из первой строки, если они заполнены
+            if (firstRow) {
+                const firstWidth = firstRow.querySelector(".width").value;
+                const firstThickness = firstRow.querySelector(".thickness").value;
+                if (firstWidth) newRow.querySelector(".width").value = firstWidth;
+                if (firstThickness) newRow.querySelector(".thickness").value = firstThickness;
+            }
+
+            sheetRows.appendChild(newRow);
+            updateSheetCalculations();
+        }
+
+        function deleteSheetRow(button) {
+            const row = button.closest(".sheet-row");
+            row.remove();
+            updateSheetCalculations();
+        }
+
+        // Функция для округления до ближайшего числа, кратного 5, в большую сторону
+        function roundToNearest5(value) {
+            return Math.ceil(value / 5) * 5;
+        }
+
+        function updateSheetCalculations() {
+            const sheetRows = document.querySelectorAll(".sheet-row");
+            let totalPrice = 0;
+            let totalWeight = 0;
+
+            sheetRows.forEach(row => {
+                const length = parseFloat(row.querySelector(".length").value) || 0;
+                const width = parseFloat(row.querySelector(".width").value) || 0;
+                const thickness = parseFloat(row.querySelector(".thickness").value) || 0;
+                const price = parseFloat(row.querySelector(".price").value) || 0;
+
+                const weight = (length / 1000) * (width / 1000) * (thickness / 1000) * 7.85 * 1000;
+                const sheetPrice = weight * price; // Стоимость листа = вес * цена
+
+                row.querySelector(".weight").innerText = weight.toFixed(2);
+                row.querySelector(".sheet-price").innerText = Math.round(sheetPrice); // Округляем до целого числа
+
+                totalWeight += weight;
+                totalPrice += sheetPrice;
+            });
+
+            // Округляем общую стоимость до целого числа
+            document.querySelector(".total-price").innerText = Math.round(totalPrice);
+            document.querySelector(".total-weight").innerText = totalWeight.toFixed(2);
+        }
+
+        // Добавляем обработчики событий для автоматического расчета рессоры
+        document.getElementById("sheet-rows").addEventListener("input", updateSheetCalculations);
     </script>
 </body>
 </html>
