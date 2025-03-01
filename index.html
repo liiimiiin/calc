@@ -380,7 +380,7 @@
             let weightPerMeter = weights[selectedDiameter];
             let pricePerKg = prices[selectedDiameter];
             
-            let weight = Math.ceil(((length + width) * (weightPerMeter / 1000)) * 10) / 10;
+            let weight = Math.ceil(((length + width) * ((weightPerMeter / 1000)) * 10)* 1.15) / 10;
             let totalPrice = Math.ceil(weight * pricePerKg + materials[selectedType] + work[selectedType]);
 
             let size = `${selectedDiameter}мм x ${width}мм x ${height}мм, ${selectedType}`;
