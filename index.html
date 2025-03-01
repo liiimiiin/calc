@@ -41,12 +41,19 @@
 
         input {
             width: 100%;
-            padding: 10px;
+            padding: 8px;
             margin-top: 5px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            font-size: 16px;
+            font-size: 14px;
             box-sizing: border-box;
+            -moz-appearance: textfield; /* Firefox */
+            appearance: textfield; /* Стандартные браузеры */
+        }
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
         }
 
         .buttons-group {
@@ -262,7 +269,7 @@
         }
 
         .total-result {
-            margin-top: 20px;
+            margin-top: 10px;
             font-size: 18px;
             font-weight: bold;
         }
@@ -334,10 +341,10 @@
         <div id="sheet-rows">
             <div class="sheet-row">
                 <div class="input-group">
-                    <input type="number" placeholder="Длина (мм)" class="length">
-                    <input type="number" placeholder="Ширина (мм)" class="width">
-                    <input type="number" placeholder="Толщина (мм)" class="thickness">
-                    <input type="number" placeholder="Цена (грн/кг)" class="price">
+                    <input type="number" placeholder="Длина, мм" class="length">
+                    <input type="number" placeholder="Ширина, мм" class="width">
+                    <input type="number" placeholder="Толщина, мм" class="thickness">
+                    <input type="number" placeholder="Цена грн/кг" class="price">
                 </div>
                 <div class="result">
                     <span>Вес: <span class="weight">0</span> кг | Стоимость: <span class="sheet-price">0</span> грн</span>
