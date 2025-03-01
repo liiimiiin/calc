@@ -399,6 +399,7 @@
             document.getElementById("round-fields").style.display = type === "round" ? "block" : "none";
             document.getElementById("btnSheet").classList.toggle("active", type === "sheet");
             document.getElementById("btnRound").classList.toggle("active", type === "round");
+            calculateWeight(); // Добавляем автоматический расчет при переключении типа
         }
 
         function calculateWeight() {
@@ -406,18 +407,26 @@
             let weight = 0;
             
             if (selectedTypeMetal === "sheet") {
-                let length = parseFloat(document.getElementById("length").value) / 1000;
-                let width = parseFloat(document.getElementById("width-metal").value) / 1000;
-                let thickness = parseFloat(document.getElementById("thickness").value) / 1000;
-                weight = length * width * thickness * density * 1000;
+                let length = parseFloat(document.getElementById("length").value) || 0;
+                let width = parseFloat(document.getElementById("width-metal").value) || 0;
+                let thickness = parseFloat(document.getElementById("thickness").value) || 0;
+                weight = (length / 1000) * (width / 1000) * (thickness / 1000) * density * 1000;
             } else {
-                let diameter = parseFloat(document.getElementById("diameter-metal").value) / 1000;
-                let length = parseFloat(document.getElementById("length-round").value) / 1000;
-                weight = (Math.PI * Math.pow(diameter / 2, 2) * length * density * 1000);
+                let diameter = parseFloat(document.getElementById("diameter-metal").value) || 0;
+                let length = parseFloat(document.getElementById("length-round").value) || 0;
+                weight = (Math.PI * Math.pow((diameter / 1000) / 2, 2) * (length / 1000) * density * 1000);
             }
             
-            document.getElementById("weight-result").innerText = weight.toFixed(2);
+            // Если вес NaN, выводим 0
+            document.getElementById("weight-result").innerText = isNaN(weight) ? "0" : weight.toFixed(2);
         }
+
+        // Добавляем обработчики событий для автоматического расчета веса
+        document.getElementById("length").addEventListener("input", calculateWeight);
+        document.getElementById("width-metal").addEventListener("input", calculateWeight);
+        document.getElementById("thickness").addEventListener("input", calculateWeight);
+        document.getElementById("diameter-metal").addEventListener("input", calculateWeight);
+        document.getElementById("length-round").addEventListener("input", calculateWeight);
     </script>
 </body>
 </html>
