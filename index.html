@@ -282,6 +282,36 @@
         .total-result .total-weight {
             color: #28a745; /* Зеленый цвет для веса комплекта */
         }
+
+        /* Стили для наценки */
+        .markup-section {
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .markup-section label {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .markup-section input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        .markup-percent {
+            width: 60px;
+            display: none;
+        }
+
+        .markup-percent.visible {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -315,6 +345,14 @@
         <!-- Результат -->
         <div class="result" id="result">Заполните все необходимые параметры!</div>
         <div class="result" id="materials"></div>
+
+        <!-- Наценка -->
+        <div class="markup-section">
+            <label>
+                <input type="checkbox" id="markup-checkbox"> Наценка
+            </label>
+            <input type="number" id="markup-percent" class="markup-percent" placeholder="%" min="0" max="100">
+        </div>
     </div>
 
     <!-- Калькулятор веса металла -->
@@ -460,6 +498,23 @@
             autoCalculate();
         });
 
+        // Обработчики для наценки
+        const markupCheckbox = document.getElementById('markup-checkbox');
+        const markupPercent = document.getElementById('markup-percent');
+
+        markupCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                markupPercent.classList.add('visible');
+                markupPercent.value = '10'; // Устанавливаем значение по умолчанию
+            } else {
+                markupPercent.classList.remove('visible');
+                markupPercent.value = '';
+            }
+            autoCalculate();
+        });
+
+        markupPercent.addEventListener('input', autoCalculate);
+
         function calculatePrice() {
             const disabledDiameters = [12, 14, 16];
             if (selectedType === 'Кованная' && disabledDiameters.includes(selectedDiameter)) {
@@ -486,6 +541,12 @@
             
             let weight = Math.ceil(((length + width) * ((weightPerMeter / 1000)) * 10)* 1.15) / 10;
             let totalPrice = Math.ceil(weight * pricePerKg + materials[selectedType] + work[selectedType]);
+
+            // Применяем наценку, если она включена
+            if (markupCheckbox.checked) {
+                const percent = parseFloat(markupPercent.value) || 0;
+                totalPrice = Math.ceil(totalPrice * (1 + percent / 100));
+            }
 
             let size = `${selectedDiameter}x${width}x${height}мм, ${selectedType}`;
             document.getElementById("result").innerHTML = `Размер: ${size} - Цена: <span class="price">${totalPrice} грн</span>`;
